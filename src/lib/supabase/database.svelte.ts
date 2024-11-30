@@ -34,7 +34,7 @@ export async function uploadPhoto(file: File, room: Tables<'parties'>) {
 	const result = await supabase
 		.from('party_members')
 		.select('*')
-		.eq('party_id', room)
+		.eq('party_id', room.id)
 		.eq('user_id', user.user.id);
 
 	if (result.data && user.user) {
