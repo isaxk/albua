@@ -54,7 +54,7 @@ export async function uploadPhoto(file: File, room: Tables<'parties'>) {
 				.from('photos')
 				.upload(`${room.host_user_id}/${user.user.id}/${photoId}.png`, file);
 			console.log(data, error);
-			/* const db = await supabase
+			const db = await supabase
 				.from('photos')
 				.insert([
 					{
@@ -63,7 +63,7 @@ export async function uploadPhoto(file: File, room: Tables<'parties'>) {
 						party_id: room.id
 					}
 				])
-				.select(); */
+				.select();
 
 		}
 		clearTimeout(timeout);
