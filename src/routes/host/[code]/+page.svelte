@@ -1,33 +1,16 @@
 <script lang="ts">
+	import GalleryGrid from '$lib/components/gallery/gallery-grid.svelte';
 	import { user } from '$lib/supabase/auth.svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import { qr } from '@svelte-put/qr/svg';
-	import Spotlight from '$lib/components/gallery/spotlight.svelte';
-	import GalleryItem from '$lib/components/gallery/gallery-item.svelte';
 	import {
 		createMembersStore,
-		createPhotosStore,
-		getMembers,
-		getPhotos,
-		onPhotosUpdate
+		createPhotosStore
 	} from '$lib/supabase/database.svelte';
-	import { flip } from 'svelte/animate';
-	import { fly } from 'svelte/transition';
 	import { dragscroll } from '@svelte-put/dragscroll';
-	import { quartIn, quartOut } from 'svelte/easing';
-	import { activePhoto } from '$lib/stores/index.svelte';
-	import GalleryGrid from '$lib/components/gallery/gallery-grid.svelte';
-	import type { Tables } from '$lib/types/supabase.js';
-	import { supabase } from '$lib/supabase/init.js';
 
 	let { data } = $props();
 
 	const photos = createPhotosStore(data.photos, data.party.id);
 	const members = createMembersStore(data.members, data.party.id);
-
-	onDestroy(() => {
-		supabase.removeAllChannels();
-	});
 </script>
 
 {#if data.party.host_user_id === user.user?.id}

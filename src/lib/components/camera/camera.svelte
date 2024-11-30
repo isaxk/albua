@@ -10,7 +10,7 @@
 		Upload,
 		X
 	} from 'lucide-svelte';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { Drawer } from 'vaul-svelte';
 	import GalleryGrid from '../gallery/gallery-grid.svelte';
@@ -86,9 +86,6 @@
 		.subscribe();
 	});
 
-    onDestroy(()=>{
-        supabase.removeAllChannels();
-    })
 
 	async function capture() {
 		uploadComplete = false;
