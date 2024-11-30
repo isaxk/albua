@@ -6,6 +6,7 @@ import type {
 import { v4 as uuid } from 'uuid';
 import { user } from './auth.svelte';
 import { supabase } from './init';
+import { error } from '@sveltejs/kit';
 
 export async function joinMember(nickname: string, party_id: number) {
 	const { data, error } = await supabase
@@ -29,32 +30,47 @@ export async function isUserInParty(party_id: number) {
 }
 
 export async function uploadPhoto(file: File, room: Tables<'parties'>) {
-	if (!user.user) return;
+	return new Promise<{ error: string | null }>(async (resolve) => {
+		if (!user.user) {
+			resolve({
+				error: 'Authentification failed'
+			});
+			return;
+		}
 
-	const result = await supabase
-		.from('party_members')
-		.select('*')
-		.eq('party_id', room.id)
-		.eq('user_id', user.user.id);
+		const timeout = setTimeout(() => {
+			resolve({ error: 'Upload timed out. Try refreshing the page.' });
+		}, 20000);
 
-	if (result.data && user.user) {
-		const photoId = uuid();
-		const { data, error } = await supabase.storage
-			.from('photos')
-			.upload(`${room.host_user_id}/${user.user.id}/${photoId}.png`, file);
-		console.log(data, error);
-		const db = await supabase
-			.from('photos')
-			.insert([
-				{
-					party_member_id: result.data[0].id,
-					bucket_file_id: `${room.host_user_id}/${user.user.id}/${photoId}`,
-					party_id: room.id
-				}
-			])
-			.select();
-		console.log(db);
-	}
+		const result = await supabase
+			.from('party_members')
+			.select('*')
+			.eq('party_id', room.id)
+			.eq('user_id', user.user.id);
+
+		if (result.data && user.user) {
+			const photoId = uuid();
+			const { data, error } = await supabase.storage
+				.from('photos')
+				.upload(`${room.host_user_id}/${user.user.id}/${photoId}.png`, file);
+			console.log(data, error);
+			/* const db = await supabase
+				.from('photos')
+				.insert([
+					{
+						party_member_id: result.data[0].id,
+						bucket_file_id: `${room.host_user_id}/${user.user.id}/${photoId}`,
+						party_id: room.id
+					}
+				])
+				.select(); */
+
+		}
+		clearTimeout(timeout);
+		resolve({
+			error: null
+		});
+	});
 }
 
 export async function getPhotos(

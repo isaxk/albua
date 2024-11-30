@@ -15,20 +15,22 @@
 	let member: Tables<'party_members'> | null = $state(null);
 
 	supabase.auth.onAuthStateChange(async (_, session) => {
-		if (session) {
-			member = await isUserInParty(data.party.id);
-			supabase.channel('is-user-in-party').on(
-				'postgres_changes',
-				{
-					event: 'UPDATE',
-					schema: 'public',
-					table: 'party_members',
-					filter: `user_id=eq.${session.user.id}`
-				},
-				(payload) => {
-					member = payload.new[0];
-				}
-			);
+		if (session?.user) {
+			setTimeout(async () => {
+				member = await isUserInParty(data.party.id);
+				supabase.channel('is-user-in-party').on(
+					'postgres_changes',
+					{
+						event: 'UPDATE',
+						schema: 'public',
+						table: 'party_members',
+						filter: `user_id=eq.${session.user.id}`
+					},
+					(payload) => {
+						member = payload.new[0];
+					}
+				);
+			});
 		}
 	});
 
@@ -36,7 +38,7 @@
 		if (!user.user) await signInAnonomously();
 		console.log(await joinMember(name, data.party.id));
 		member = await isUserInParty(data.party.id);
-		supabase.channel('is-user-in-party').on(
+		const channel = supabase.channel('is-user-in-party').on(
 			'postgres_changes',
 			{
 				event: 'UPDATE',
@@ -51,11 +53,34 @@
 	}
 
 	function handleUpload(file: File) {
-		return new Promise<string>(async (resolve) => {
-			uploadPhoto(file, data.party).then(() => resolve(''));
+		return new Promise<{ error: string | null }>(async (resolve) => {
+			uploadPhoto(file, data.party).then((res) => {
+				console.log(res);
+				resolve(res);
+			});
 		});
 	}
 </script>
+
+<svelte:document
+	onvisibilitychange={() => {
+		if (!document.hidden) {
+			supabase.channel('is-user-in-party').on(
+				'postgres_changes',
+				{
+					event: 'UPDATE',
+					schema: 'public',
+					table: 'party_members',
+					filter: `user_id=eq.${user.user?.id}`
+				},
+				(payload) => {
+					member = payload.new[0];
+				}
+			);
+			console.log(supabase.getChannels());
+		}
+	}}
+/>
 
 {#if user.user && member && !member.kicked}
 	<!-- <Imagetaker party={data.party} {member} /> -->
