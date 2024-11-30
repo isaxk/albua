@@ -11,7 +11,7 @@
 
 {#if data.party.host_user_id === user.user?.id}
 	<div class="flex h-screen w-full">
-		<div class="flex min-w-[400px] max-w-[400px] flex-col bg-zinc-100 text-center drop-shadow-2xl">
+		<div class="flex min-w-[400px] z-20 max-w-[400px] flex-col bg-zinc-100 text-center drop-shadow-2xl">
 			<h1
 				class="flex h-20 items-center justify-center border-b bg-zinc-100 text-center text-4xl font-semibold drop-shadow"
 			>

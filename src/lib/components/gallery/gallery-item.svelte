@@ -87,7 +87,7 @@
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div
 		in:fly={{ x: -100, duration: 400 }}
-		class="relative col-span-3 row-span-3 aspect-square h-full overflow-hidden rounded-2xl
+		class="relative col-span-3 row-span-3 aspect-square h-full overflow-hidden rounded-2xl z-0
 		bg-zinc-200/5"
 		style:min-width="{height}px"
 		bind:clientHeight={height}
@@ -127,7 +127,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="relative aspect-square overflow-hidden rounded-xl bg-zinc-200/5">
+	<div class="relative aspect-square overflow-hidden rounded-xl bg-zinc-200/5 z-0">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<img
