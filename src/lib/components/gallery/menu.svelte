@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { user } from '$lib/supabase/auth.svelte';
 	import { AlertDialog, DropdownMenu, Checkbox, Label } from 'bits-ui';
 	import { Check, EllipsisVertical, Gavel, Trash } from 'lucide-svelte';
 	import { fade, fly, scale } from 'svelte/transition';
 
-	let { onKick, onDelete } = $props();
+	let { onKick, onDelete, userApp=false } = $props();
 	let dialogOpen = $state(false);
 	let deletePhotos = $state(true);
 </script>
@@ -26,15 +27,17 @@
 			</div>
 			Delete photo
 		</DropdownMenu.Item>
-		<DropdownMenu.Item
-			onclick={() => (dialogOpen = true)}
-			class="flex cursor-pointer items-center py-1 pr-4 text-red-400 transition-all hover:bg-zinc-300/20"
-		>
-			<div class="flex w-8 justify-center">
-				<Gavel size={15} />
-			</div>
-			Kick Member
-		</DropdownMenu.Item>
+		{#if !userApp}
+			<DropdownMenu.Item
+				onclick={() => (dialogOpen = true)}
+				class="flex cursor-pointer items-center py-1 pr-4 text-red-400 transition-all hover:bg-zinc-300/20"
+			>
+				<div class="flex w-8 justify-center">
+					<Gavel size={15} />
+				</div>
+				Kick Member
+			</DropdownMenu.Item>
+		{/if}
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
@@ -55,15 +58,17 @@
 				<AlertDialog.Title class="text-lg font-semibold tracking-tight"
 					>Are you sure you want to <span class="text-red-600">kick</span> this member?</AlertDialog.Title
 				>
-				<div class="flex items-center space-x-3 gap-1">
+				<div class="flex items-center gap-1 space-x-3">
 					This will also <span class="text-red-500">delete</span> any photos they have uploaded
-				  </div>
-				  
+				</div>
+
 				<div class="flex w-full items-end justify-center gap-2">
 					<AlertDialog.Cancel class="h-10 w-full rounded bg-zinc-200 drop-shadow-sm"
 						>Cancel</AlertDialog.Cancel
 					>
-					<AlertDialog.Action onclick={()=>onKick(deletePhotos)} class="h-10 w-full rounded bg-red-800 text-white drop-shadow-sm"
+					<AlertDialog.Action
+						onclick={() => onKick(deletePhotos)}
+						class="h-10 w-full rounded bg-red-800 text-white drop-shadow-sm"
 						>Kick</AlertDialog.Action
 					>
 				</div>

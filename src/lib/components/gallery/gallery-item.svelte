@@ -141,7 +141,7 @@
 				>
 			{/if}
 			<div class="text-nowrap text-[10px]">{dateTime}</div>
-			<Menu onDelete={handleDelete} onKick={(deletePhotos: boolean) => kickMember(member.id, deletePhotos)} />
+			<Menu onDelete={handleDelete} onKick={(deletePhotos: boolean) => kickMember(member.id, deletePhotos)} {userApp}/>
 		</div>
 	</div>
 {/if}

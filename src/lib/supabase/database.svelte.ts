@@ -81,6 +81,7 @@ export async function deletePhoto(id: number, bucket_path: string) {
 	const res = await supabase.storage.from('photos').remove([bucket_path + '.png']);
 	const { error } = await supabase.from('photos').delete().eq('id', id);
 	console.log(res, bucket_path + '.png');
+	console.log(error);
 	return error;
 }
 

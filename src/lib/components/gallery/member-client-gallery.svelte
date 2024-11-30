@@ -6,6 +6,7 @@
 	import { Drawer } from 'vaul-svelte';
 	import GalleryGrid from './gallery-grid.svelte';
 	import { fade, fly } from 'svelte/transition';
+	import { supabase } from '$lib/supabase/init';
 
 	let {
 		party,
@@ -16,10 +17,30 @@
 		member: Tables<'party_members'>;
 		open: boolean;
 	} = $props();
-	let photos: Tables<'photos'>[] = $state([]);
+	let photos: Tables<'photos'>[] | { [key: string]: any; }[] = $state([]);
+
 
 	onMount(async () => {
 		photos = await getPhotos(party.id, member.id);
+		const photosSubscribe = supabase
+		.channel('photos-insert')
+		.on(
+			'postgres_changes',
+			{ event: '*', schema: 'public', table: 'photos', filter: `party_id=eq.${party.id}` },
+			(payload) => {
+				console.log(payload);
+
+				if (payload.eventType === 'INSERT') {
+					if (member && payload.new.party_member_id !== member) return;
+					photos = [...photos, payload.new];
+				} else if (payload.eventType === 'DELETE') {
+					if (!photos.some((photo) => photo.id === payload.old.id)) return;
+					const index = photos.findIndex((photo) => photo.id === payload.old.id);
+					photos.splice(index, 1);
+				}
+			}
+		)
+		.subscribe();
 	});
 </script>
 
