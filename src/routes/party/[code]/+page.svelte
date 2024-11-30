@@ -1,7 +1,8 @@
 <script lang="ts">
+	import Camera from '$lib/components/camera/camera.svelte';
 	import Imagetaker from '$lib/components/imagetaker.svelte';
 	import { signInAnonomously, user } from '$lib/supabase/auth.svelte';
-	import { isUserInParty, joinMember } from '$lib/supabase/database.svelte.js';
+	import { isUserInParty, joinMember, uploadPhoto } from '$lib/supabase/database.svelte.js';
 	import { supabase } from '$lib/supabase/init.js';
 	import type { Tables } from '$lib/types/supabase.js';
 	import { onMount } from 'svelte';
@@ -48,10 +49,17 @@
 			}
 		);
 	}
+
+	function handleUpload(file: File) {
+		return new Promise<string>(async (resolve) => {
+			uploadPhoto(file, data.party).then(() => resolve(''));
+		});
+	}
 </script>
 
 {#if user.user && member && !member.kicked}
-	<Imagetaker party={data.party} {member} />
+	<!-- <Imagetaker party={data.party} {member} /> -->
+	<Camera party={data.party} {member} onupload={handleUpload} />
 {:else if member && member.kicked}
 	<p class="p-4 text-3xl font-medium">You were kicked</p>
 {:else}

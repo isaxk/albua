@@ -5,7 +5,7 @@
 	import { GalleryVerticalEnd, RefreshCcw, Table, Upload, X, Zap } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import Spinner from './spinner.svelte';
+	import Spinner from './ui/spinner.svelte';
 	import type { Tables } from '$lib/types/supabase';
 	import GalleryGrid from './gallery/gallery-grid.svelte';
 	import { quartIn, quartOut } from 'svelte/easing';

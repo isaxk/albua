@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { user } from '$lib/supabase/auth.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { qr } from '@svelte-put/qr/svg';
 	import Spotlight from '$lib/components/gallery/spotlight.svelte';
 	import GalleryItem from '$lib/components/gallery/gallery-item.svelte';
 	import {
-	createMembersStore,
-	createPhotosStore,
+		createMembersStore,
+		createPhotosStore,
 		getMembers,
 		getPhotos,
 		onPhotosUpdate
@@ -18,12 +18,16 @@
 	import { activePhoto } from '$lib/stores/index.svelte';
 	import GalleryGrid from '$lib/components/gallery/gallery-grid.svelte';
 	import type { Tables } from '$lib/types/supabase.js';
+	import { supabase } from '$lib/supabase/init.js';
 
 	let { data } = $props();
 
 	const photos = createPhotosStore(data.photos, data.party.id);
 	const members = createMembersStore(data.members, data.party.id);
 
+	onDestroy(() => {
+		supabase.removeAllChannels();
+	});
 </script>
 
 {#if data.party.host_user_id === user.user?.id}

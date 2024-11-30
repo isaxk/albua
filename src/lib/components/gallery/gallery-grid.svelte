@@ -3,7 +3,7 @@
 	import type { Tables } from '$lib/types/supabase';
 	import type { Table } from 'lucide-svelte';
 	import { flip } from 'svelte/animate';
-	import { quartOut } from 'svelte/easing';
+	import { quartIn, quartOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	import GalleryItem from './gallery-item.svelte';
 
@@ -42,6 +42,7 @@
 			<div
 				animate:flip={{ duration: 400, easing: quartOut }}
 				in:fly={{ x: -100, duration: 400, easing: quartOut }}
+				out:fly={{ x: -100, duration: 400, easing: quartOut }}
 				class="aspect-square h-full w-full {!userApp ? (i === 0 ? 'row-span-3' : 'col-span-3') : ''}"
 			>
 				<GalleryItem

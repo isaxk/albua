@@ -1,13 +1,19 @@
 <script lang="ts">
 	import GalleryGrid from '$lib/components/gallery/gallery-grid.svelte';
 	import { createPhotosStore } from '$lib/supabase/database.svelte.js';
+	import { supabase } from '$lib/supabase/init.js';
 	import { dragscroll } from '@svelte-put/dragscroll';
 	import { ArrowLeft } from 'lucide-svelte';
+	import { onDestroy } from 'svelte';
 
 	let { data } = $props();
 	console.log(data);
 
 	const photos = createPhotosStore(data.memberPhotos, data.party.id, data.member.id);
+
+	onDestroy(() => {
+		supabase.removeAllChannels();
+	});
 </script>
 
 {#if data.member}
@@ -18,7 +24,7 @@
 			<div>'s photos</div>
 		</div>
 		<div use:dragscroll class="h-96 min-h-0 flex-grow overflow-x-scroll p-3 pt-0 xl:p-4 xl:pt-0">
-			<GalleryGrid photos={photos.photos} members={[data.member]}  memberPage/>
+			<GalleryGrid photos={photos.photos} members={[data.member]} memberPage />
 		</div>
 	</div>
 {/if}
