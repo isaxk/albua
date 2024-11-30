@@ -150,7 +150,7 @@
 
 	async function upload() {
 		loading = true;
-		await uploadPhoto(dataURLtoFile(photoData, ''), party.id);
+		await uploadPhoto(dataURLtoFile(photoData, ''), party);
 		loading = false;
 		uploaded = true;
 		await sleep(200);

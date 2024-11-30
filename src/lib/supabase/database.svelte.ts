@@ -28,7 +28,7 @@ export async function isUserInParty(party_id: number) {
 	else return null;
 }
 
-export async function uploadPhoto(file: File, room: number) {
+export async function uploadPhoto(file: File, room: Tables<'parties'>) {
 	if (!user.user) return;
 
 	const result = await supabase
@@ -41,15 +41,15 @@ export async function uploadPhoto(file: File, room: number) {
 		const photoId = uuid();
 		const { data, error } = await supabase.storage
 			.from('photos')
-			.upload(`${room}/${photoId}.png`, file);
+			.upload(`${room.host_user_id}/${photoId}.png`, file);
 		console.log(data, error);
 		const db = await supabase
 			.from('photos')
 			.insert([
 				{
 					party_member_id: result.data[0].id,
-					bucket_file_id: `${room}/${photoId}`,
-					party_id: room
+					bucket_file_id: `${room.host_user_id}/${photoId}`,
+					party_id: room.id
 				}
 			])
 			.select();
