@@ -62,6 +62,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          kicked: boolean
           nickname: string | null
           party_id: number | null
           user_id: string | null
@@ -69,6 +70,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
+          kicked?: boolean
           nickname?: string | null
           party_id?: number | null
           user_id?: string | null
@@ -76,6 +78,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+          kicked?: boolean
           nickname?: string | null
           party_id?: number | null
           user_id?: string | null

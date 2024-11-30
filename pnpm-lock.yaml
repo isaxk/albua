@@ -23,9 +23,15 @@ dependencies:
   luxon:
     specifier: ^3.5.0
     version: 3.5.0
+  svelte-gesture:
+    specifier: ^0.1.4
+    version: 0.1.4(svelte@5.2.9)
   uuid:
     specifier: ^11.0.3
     version: 11.0.3
+  vaul-svelte:
+    specifier: ^0.3.2
+    version: 0.3.2(svelte@5.2.9)
 
 devDependencies:
   '@svelte-put/dragscroll':
@@ -972,6 +978,16 @@ packages:
       '@typescript-eslint/types': 8.16.0
       eslint-visitor-keys: 4.2.0
     dev: true
+
+  /@use-gesture/core@10.3.1:
+    resolution: {integrity: sha512-WcINiDt8WjqBdUXye25anHiNxPc0VOrlT8F6LLkU6cycrOGUDyY/yyFmsg3k8i5OLvv25llc0QC45GhR/C8llw==}
+    dev: false
+
+  /@use-gesture/vanilla@10.3.1:
+    resolution: {integrity: sha512-lT4scGLu59ovA3zmtUonukAGcA0AdOOh+iwNDS05Bsu7Lq9aZToDHhI6D8Q2qvsVraovtsLLYwPrWdG/noMAKw==}
+    dependencies:
+      '@use-gesture/core': 10.3.1
+    dev: false
 
   /acorn-jsx@5.3.2(acorn@8.14.0):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2390,6 +2406,15 @@ packages:
       svelte: 5.2.9
     dev: true
 
+  /svelte-gesture@0.1.4(svelte@5.2.9):
+    resolution: {integrity: sha512-JZUDqXW/eH2qmPF50teoP3TWobUv5QrwRVxoRGF/744jOoppaRUIRPnFxVOmvE94X2gxApynnMU4YlR3dmZpjw==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      '@use-gesture/vanilla': 10.3.1
+      svelte: 5.2.9
+    dev: false
+
   /svelte@5.2.9:
     resolution: {integrity: sha512-LjO7R6K8FI8dA3l+4CcsbJ3djIe2TtokHGzfpDTro5g8nworMbTz9alCR95EQXGsqlzIAvqJtZ7Yy0o33lL09Q==}
     engines: {node: '>=18'}
@@ -2556,6 +2581,15 @@ packages:
   /uuid@11.0.3:
     resolution: {integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==}
     hasBin: true
+    dev: false
+
+  /vaul-svelte@0.3.2(svelte@5.2.9):
+    resolution: {integrity: sha512-X4OGWttSTVUl417qGDsSFgOvIx24DoiMRY/jaP9z0v9FL8LQQJ0RQ1ZM0QpdyQPRlNd24ewjNQHh5EgYDtfNpw==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.1
+    dependencies:
+      bits-ui: 0.21.16(svelte@5.2.9)
+      svelte: 5.2.9
     dev: false
 
   /vite@5.4.11:

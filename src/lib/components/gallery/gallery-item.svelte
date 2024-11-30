@@ -4,10 +4,19 @@
 	import { DateTime } from 'luxon';
 	import { fly } from 'svelte/transition';
 	import Menu from './menu.svelte';
-	import { deletePhoto } from '$lib/supabase/database.svelte';
+	import { deletePhoto, kickMember } from '$lib/supabase/database.svelte';
 	import { activePhoto } from '$lib/stores/index.svelte';
 
-	let { dbId, photoId, date, spotlight = false, memberPage = false, member, onclick } = $props();
+	let {
+		dbId,
+		photoId,
+		date,
+		spotlight = false,
+		memberPage = false,
+		member,
+		onclick,
+		userApp = false
+	} = $props();
 
 	let height = $state(0);
 	let loaded = $state(false);
@@ -38,8 +47,6 @@
 		deletePhoto(dbId, photoId);
 	}
 
-	function handleKick() {}
-
 	let moveX = 0;
 	let mouseDown = false;
 
@@ -51,18 +58,16 @@
 		console.log(moveX);
 		if (moveX > 20 || moveX < -20) {
 			moveX = 0;
-			return;
 		} else {
 			onclick();
 		}
+		moveX = 0;
 	}
 	function handleMouseMove(e: MouseEvent) {
-		
-		if(mouseDown) {
+		if (mouseDown) {
 			moveX += e.movementX;
 			console.log(moveX);
 		}
-		
 	}
 </script>
 
@@ -93,7 +98,7 @@
 				? 'w-max pl-6'
 				: 'w-96'} items-center gap-0 rounded-tr-xl bg-black/70 text-white/80 drop-shadow-2xl"
 		>
-			{#if !memberPage}
+			{#if !memberPage && !userApp}
 				<a
 					class="text-md flex-grow pl-4 font-medium"
 					onclick={() => (activePhoto.value = null)}
@@ -102,7 +107,10 @@
 			{/if}
 			<div class="text-md text-white/50">{dateTime}</div>
 			<div class="h-full px-2">
-				<Menu onDelete={handleDelete} onKick={handleKick} />
+				<Menu
+					onDelete={handleDelete}
+					onKick={(deletePhotos: boolean) => kickMember(member.id, deletePhotos)}
+				/>
 			</div>
 		</div>
 	</div>
@@ -121,19 +129,19 @@
 			class="h-full w-full object-cover {loaded ? 'opacity-100' : 'opacity-0'} select-none"
 		/>
 		<div
-			class="absolute bottom-0 left-0 right-0 flex h-8 items-center bg-black/50 pl-2 text-white/70"
+			class="absolute bottom-0 left-0 right-0 flex h-8 items-center gap-2 bg-black/50 pl-2 text-white/70"
 		>
-			{#if memberPage}
+			{#if memberPage || userApp}
 				<div class="flex-grow"></div>
 			{:else}
 				<a
 					onclick={async () => (activePhoto.value = null)}
-					class="flex-grow pl-2 text-sm font-medium text-white/70"
+					class="min-w-0 flex-grow overflow-x-hidden text-ellipsis text-nowrap pl-2 text-xs font-medium text-white/70"
 					href="{$page.url.pathname}/member/{member.id}">{member ? member.nickname : 'user'}</a
 				>
 			{/if}
-			<div class="text-xs">{dateTime}</div>
-			<Menu onDelete={handleDelete} onKick={handleKick} />
+			<div class="text-nowrap text-[10px]">{dateTime}</div>
+			<Menu onDelete={handleDelete} onKick={(deletePhotos: boolean) => kickMember(member.id, deletePhotos)} />
 		</div>
 	</div>
 {/if}

@@ -5,6 +5,7 @@
 	import Spotlight from '$lib/components/gallery/spotlight.svelte';
 	import GalleryItem from '$lib/components/gallery/gallery-item.svelte';
 	import {
+	createMembersStore,
 	createPhotosStore,
 		getMembers,
 		getPhotos,
@@ -21,8 +22,7 @@
 	let { data } = $props();
 
 	const photos = createPhotosStore(data.photos, data.party.id);
-
-	let members: Tables<"party_members">[] = $state(data.members);
+	const members = createMembersStore(data.members, data.party.id);
 
 </script>
 
@@ -32,6 +32,6 @@
 		use:dragscroll
 		class="flex h-full flex-grow gap-3 overflow-x-scroll bg-zinc-950 p-3 text-white 2xl:gap-4 2xl:p-4"
 	>
-		<GalleryGrid photos={photos.photos} members={members} />
+		<GalleryGrid photos={photos.photos} members={members.members} />
 	</div>
 {/if}

@@ -10,11 +10,13 @@
 	let {
 		photos,
 		members,
-		memberPage = false
+		memberPage = false,
+		userApp = false
 	}: {
-		photos: Tables<'photos'>[] | { [key: string]: any; }[];
-		members: Tables<'party_members'>[];
+		photos: Tables<'photos'>[] | { [key: string]: any }[];
+		members: Tables<'party_members'>[] | { [key: string]: any }[];
 		memberPage?: boolean;
+		userApp?: boolean;
 	} = $props();
 
 	const sortedByDate = $derived(
@@ -31,12 +33,16 @@
 </script>
 
 {#if sortedByDate.length > 0 && members.length > 0}
-	<div class="grid h-full grid-flow-col min-w-0 w-max min-h-0 grid-rows-3 gap-3 text-white 2xl:gap-4">
+	<div
+		class="grid h-full {userApp
+			? 'grid-flow-row grid-cols-2 w-full h-max'
+			: 'grid-flow-col grid-rows-3 w-max'} min-h-0  min-w-0 gap-3 text-white 2xl:gap-4"
+	>
 		{#each sortedByDate as item, i (item.id)}
 			<div
 				animate:flip={{ duration: 400, easing: quartOut }}
 				in:fly={{ x: -100, duration: 400, easing: quartOut }}
-				class="aspect-square h-full w-full {i === 0 ? 'row-span-3' : 'col-span-3'}"
+				class="aspect-square h-full w-full {!userApp ? (i === 0 ? 'row-span-3' : 'col-span-3') : ''}"
 			>
 				<GalleryItem
 					onclick={() => {
@@ -44,17 +50,16 @@
 						activePhoto.memberPage = memberPage;
 					}}
 					dbId={item.id}
-					spotlight={i === 0}
+					spotlight={i === 0 && !userApp}
 					photoId={item.bucket_file_id}
 					date={item.created_at}
 					member={members.filter((member) => member.id == item.party_member_id)[0]}
-                    {memberPage}
+					{memberPage}
+					{userApp}
 				/>
 			</div>
 		{/each}
 	</div>
 {:else}
-    <div class="p-3 text-zinc-400">
-        No photos yet!
-    </div>
+	<div class="p-3 text-zinc-400">No photos yet!</div>
 {/if}

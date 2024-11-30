@@ -1,13 +1,11 @@
-import type { UpdatePayload } from 'vite';
-import { user } from './auth.svelte';
-import { supabase } from './init';
-import { v4 as uuid } from 'uuid';
+import type { Tables } from '$lib/types/supabase';
 import type {
 	RealtimePostgresDeletePayload,
 	RealtimePostgresInsertPayload
 } from '@supabase/supabase-js';
-import { memory } from '@sveu/browser';
-import type { Tables } from '$lib/types/supabase';
+import { v4 as uuid } from 'uuid';
+import { user } from './auth.svelte';
+import { supabase } from './init';
 
 export async function joinMember(nickname: string, party_id: number) {
 	const { data, error } = await supabase
@@ -19,15 +17,15 @@ export async function joinMember(nickname: string, party_id: number) {
 }
 
 export async function isUserInParty(party_id: number) {
-	if (!user.user) return false;
+	if (!user.user) return null;
 	const { data, error } = await supabase
 		.from('party_members')
 		.select('*')
 		.eq('party_id', party_id)
 		.eq('user_id', user.user.id);
 
-	if (data && data.length > 0) return true;
-	else return false;
+	if (data && data.length > 0) return data[0];
+	else return null;
 }
 
 export async function uploadPhoto(file: File, room: number) {
@@ -86,6 +84,16 @@ export async function deletePhoto(id: number, bucket_path: string) {
 	return error;
 }
 
+export async function kickMember(member_id: number, deletePhotos: boolean) {
+	if (deletePhotos) {
+		const { error } = await supabase.from('photos').delete().eq('party_member_id', member_id);
+	}
+	const { error } = await supabase
+		.from('party_members')
+		.update({ kicked: true })
+		.eq('id', member_id);
+}
+
 export async function getPartyById(party: number): Promise<Tables<'parties'> | null> {
 	const { data, error } = await supabase.from('parties').select('*').eq('id', party);
 	console.log(data);
@@ -112,9 +120,20 @@ export async function getMemberById(id: number): Promise<Tables<'party_members'>
 export function createPhotosStore(
 	initial: Tables<'photos'>[],
 	party: number,
-	member: number | null = null,
+	member: number | null = null
 ) {
 	let photos: Tables<'photos'>[] | { [key: string]: any }[] = $state(initial);
+	const sorted = $derived(
+		photos.toSorted((a, b) => {
+			if (a.created_at < b.created_at) {
+				return 1;
+			}
+			if (a.created_at > b.created_at) {
+				return -1;
+			}
+			return 0;
+		})
+	);
 
 	const photosSubscribe = supabase
 		.channel('photos-insert')
@@ -137,7 +156,35 @@ export function createPhotosStore(
 		.subscribe();
 	return {
 		get photos() {
-			return photos;
+			return sorted;
+		}
+	};
+}
+
+export function createMembersStore(initial: Tables<'party_members'>[], party: number) {
+	let members: Tables<'party_members'>[] | { [key: string]: any }[] = $state(initial);
+
+	const photosSubscribe = supabase
+		.channel('members_update')
+		.on(
+			'postgres_changes',
+			{ event: '*', schema: 'public', table: 'party_members', filter: `party_id=eq.${party}` },
+			(payload) => {
+				console.log(payload);
+
+				if (payload.eventType === 'INSERT') {
+					members = [...members, payload.new];
+				} else if (payload.eventType === 'DELETE') {
+					if (!members.some((member) => member.id === payload.old.id)) return;
+					const index = members.findIndex((member) => member.id === payload.old.id);
+					members.splice(index, 1);
+				}
+			}
+		)
+		.subscribe();
+	return {
+		get members() {
+			return members;
 		}
 	};
 }

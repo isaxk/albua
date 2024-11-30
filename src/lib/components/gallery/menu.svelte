@@ -1,32 +1,73 @@
 <script lang="ts">
-	import { DropdownMenu } from 'bits-ui';
-	import { Delete, EllipsisVertical, Gavel, Trash } from 'lucide-svelte';
-	import { fly } from 'svelte/transition';
+	import { AlertDialog, DropdownMenu, Checkbox, Label } from 'bits-ui';
+	import { Check, EllipsisVertical, Gavel, Trash } from 'lucide-svelte';
+	import { fade, fly, scale } from 'svelte/transition';
 
-    let { onKick, onDelete } = $props();
-	let open = $state(false);
+	let { onKick, onDelete } = $props();
+	let dialogOpen = $state(false);
+	let deletePhotos = $state(true);
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger class="w-8 h-full flex items-center justify-center">
-		<EllipsisVertical size="15"/>
+	<DropdownMenu.Trigger class="flex h-full w-8 items-center justify-center">
+		<EllipsisVertical size="15" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content
 		transition={fly}
 		transitionConfig={{ y: 10, duration: 200 }}
-		class="rounded bg-black/90 z-50 text-white py-1 drop-shadow-xl border border-zinc-700/50"
+		class="z-50 rounded border border-zinc-700/50 bg-black/90 py-1 text-white drop-shadow-xl"
 	>
-		<DropdownMenu.Item class="text-white flex cursor-pointer transition-all hover:bg-zinc-300/20 items-center py-1 pr-4" onclick={onDelete}>
-            <div class="w-8 flex justify-center">
-                <Trash size={15}/>
-            </div>
-            Delete photo
-        </DropdownMenu.Item>
-		<DropdownMenu.Item class="text-red-400 flex cursor-pointer transition-all hover:bg-zinc-300/20 items-center py-1 pr-4" onclick={onKick}>
-            <div class="w-8 flex justify-center">
-                <Gavel size={15}/>
-            </div>
-            Kick Member
-        </DropdownMenu.Item>
+		<DropdownMenu.Item
+			class="flex cursor-pointer items-center py-1 pr-4 text-white transition-all hover:bg-zinc-300/20"
+			onclick={onDelete}
+		>
+			<div class="flex w-8 justify-center">
+				<Trash size={15} />
+			</div>
+			Delete photo
+		</DropdownMenu.Item>
+		<DropdownMenu.Item
+			onclick={() => (dialogOpen = true)}
+			class="flex cursor-pointer items-center py-1 pr-4 text-red-400 transition-all hover:bg-zinc-300/20"
+		>
+			<div class="flex w-8 justify-center">
+				<Gavel size={15} />
+			</div>
+			Kick Member
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
+
+<AlertDialog.Root bind:open={dialogOpen}>
+	<AlertDialog.Portal>
+		<AlertDialog.Overlay
+			onclick={() => (dialogOpen = false)}
+			transition={fade}
+			transitionConfig={{ duration: 150 }}
+			class="fixed inset-0 z-50 bg-black/80"
+		/>
+		<AlertDialog.Content
+			transition={scale}
+			transitionConfig={{ start: 0.9, duration: 200 }}
+			class="shadow-popover fixed left-[50%] top-[50%] z-50 grid w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-white p-7 outline-none sm:max-w-lg md:w-full"
+		>
+			<div class="flex flex-col gap-4">
+				<AlertDialog.Title class="text-lg font-semibold tracking-tight"
+					>Are you sure you want to <span class="text-red-600">kick</span> this member?</AlertDialog.Title
+				>
+				<div class="flex items-center space-x-3 gap-1">
+					This will also <span class="text-red-500">delete</span> any photos they have uploaded
+				  </div>
+				  
+				<div class="flex w-full items-end justify-center gap-2">
+					<AlertDialog.Cancel class="h-10 w-full rounded bg-zinc-200 drop-shadow-sm"
+						>Cancel</AlertDialog.Cancel
+					>
+					<AlertDialog.Action onclick={()=>onKick(deletePhotos)} class="h-10 w-full rounded bg-red-800 text-white drop-shadow-sm"
+						>Kick</AlertDialog.Action
+					>
+				</div>
+			</div>
+		</AlertDialog.Content>
+	</AlertDialog.Portal>
+</AlertDialog.Root>
