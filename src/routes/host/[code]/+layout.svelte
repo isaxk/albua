@@ -25,7 +25,7 @@
 						<svg
 							class="w-full"
 							use:qr={{
-								data: 'https://albua.isaxk.com/join/{code}',
+								data: 'https://albua.isaxk.com/party/{code}',
 								logo: '',
 								shape: 'circle'
 							}}
@@ -34,7 +34,7 @@
 				</div>
 
 				<div class="flex w-full flex-col justify-center gap-0 text-center text-lg font-normal">
-					or go to: <span class="font-medium">albua.isaxk.com/join/{data.code}</span>
+					or go to: <span class="font-medium">albua.isaxk.com/party/{data.code}</span>
 				</div>
 			</div>
 		</div>
