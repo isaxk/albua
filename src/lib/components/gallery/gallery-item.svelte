@@ -55,8 +55,8 @@
 		'bg-rose-400'
 	];
 
-	function handleDelete() {
-		deletePhoto(dbId, photoId);
+	async function handleDelete() {
+		await deletePhoto(dbId, photoId);
 	}
 
 	let moveX = 0;

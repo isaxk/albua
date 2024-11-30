@@ -41,14 +41,14 @@ export async function uploadPhoto(file: File, room: Tables<'parties'>) {
 		const photoId = uuid();
 		const { data, error } = await supabase.storage
 			.from('photos')
-			.upload(`${room.host_user_id}/${photoId}.png`, file);
+			.upload(`${room.host_user_id}/${user.user.id}/${photoId}.png`, file);
 		console.log(data, error);
 		const db = await supabase
 			.from('photos')
 			.insert([
 				{
 					party_member_id: result.data[0].id,
-					bucket_file_id: `${room.host_user_id}/${photoId}`,
+					bucket_file_id: `${room.host_user_id}/${user.user.id}/${photoId}`,
 					party_id: room.id
 				}
 			])
