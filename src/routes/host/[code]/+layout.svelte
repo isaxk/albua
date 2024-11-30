@@ -25,7 +25,7 @@
 						<svg
 							class="w-full"
 							use:qr={{
-								data: 'https://albua.isaxk.com/party/{code}',
+								data: `https://albua.isaxk.com/party/${code}`,
 								logo: '',
 								shape: 'circle'
 							}}
