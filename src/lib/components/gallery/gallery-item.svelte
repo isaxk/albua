@@ -108,7 +108,7 @@
 		<div
 			class="absolute bottom-0 left-0 flex h-14 drop-shadow-xl {memberPage
 				? 'w-max pl-6'
-				: 'w-96'} items-center gap-0 rounded-tr-xl bg-black/70 text-white/80 drop-shadow-2xl"
+				: 'w-96'} items-center gap-0 rounded-tr-xl bg-black/60 backdrop-blur text-white/80 drop-shadow-2xl"
 		>
 			{#if !memberPage && !userApp}
 				<a
@@ -141,7 +141,7 @@
 			class="h-full w-full object-cover {loaded ? 'opacity-100' : 'opacity-0'} select-none"
 		/>
 		<div
-			class="absolute bottom-0 left-0 right-0 flex h-8 items-center gap-2 bg-black/50 pl-2 text-white/70"
+			class="absolute bottom-0 left-0 right-0 flex h-8 items-center gap-2 bg-black/60 backdrop-blur pl-2 text-white/70"
 		>
 			{#if memberPage || userApp}
 				<div class="flex-grow"></div>

@@ -12,7 +12,8 @@ export async function signInAnonomously() {
 
 export async function signInWithGoogle() {
 	const { data, error } = await supabase.auth.signInWithOAuth({
-		provider: 'google'
+		provider: 'google',
+		
 	});
 	if(error) console.log(error);
 	return {data, error};
