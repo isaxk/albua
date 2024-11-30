@@ -7,7 +7,7 @@
 	let { data } = $props();
 	console.log(data);
 
-	const photos = createPhotosStore(data.photos, data.party.id, data.member.id);
+	const photos = createPhotosStore(data.memberPhotos, data.party.id, data.member.id);
 </script>
 
 {#if data.member}

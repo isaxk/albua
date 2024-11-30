@@ -1,5 +1,9 @@
 // import { supabase } from '$lib/supabase/init';
 
+import { getPartyByCode, getPhotos } from "$lib/supabase/database.svelte";
+import { error } from "@sveltejs/kit";
+import type { PageLoad } from "./$types";
+
 
 // export const load = async ({ params }) => {
 // 	const code = params.code;
@@ -17,3 +21,14 @@
 // 		code
 // 	};
 // };
+
+export const load: PageLoad = async ({params}) => {
+    const code = params.code;
+    const party = await getPartyByCode(code);
+	if (!party) error(400, { message: 'Party not found' });
+	const photos = await getPhotos(party.id);
+
+    return {
+        photos
+    }
+};

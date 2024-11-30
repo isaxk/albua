@@ -14,6 +14,6 @@ export const load: PageLoad = async ({ params }) => {
 	return {
 		party,
 		member,
-		photos
+		memberPhotos: photos
 	};
 };
