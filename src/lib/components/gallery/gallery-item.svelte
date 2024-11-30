@@ -6,6 +6,7 @@
 	import Menu from './menu.svelte';
 	import { deletePhoto, kickMember } from '$lib/supabase/database.svelte';
 	import { activePhoto } from '$lib/stores/index.svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	let {
 		dbId,
@@ -21,7 +22,18 @@
 	let height = $state(0);
 	let loaded = $state(false);
 
-	const dateTime = DateTime.fromISO(date).toRelative({ style: 'short' });
+	let dateTime = $state(DateTime.fromISO(date).toRelative({ style: 'short' }));
+	let interval: any;
+
+	onMount(()=>{
+		interval = setInterval(()=>{
+			dateTime = DateTime.fromISO(date).toRelative({ style: 'short' })
+		}, 5000)
+	})
+
+	onDestroy(()=>{
+		clearInterval(interval);
+	})
 
 	const colors = [
 		'bg-red-400',

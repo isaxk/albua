@@ -7,6 +7,7 @@
 	import GalleryGrid from './gallery-grid.svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { supabase } from '$lib/supabase/init';
+	import { user } from '$lib/supabase/auth.svelte';
 
 	let {
 		party,
@@ -26,12 +27,12 @@
 		.channel('photos-insert')
 		.on(
 			'postgres_changes',
-			{ event: '*', schema: 'public', table: 'photos', filter: `party_id=eq.${party.id}` },
+			{ event: '*', schema: 'public', table: 'photos', filter: `user_id=eq.${user.user?.id}` },
 			(payload) => {
-				console.log(payload);
+				console.log(payload, member.id);
 
 				if (payload.eventType === 'INSERT') {
-					if (member && payload.new.party_member_id !== member) return;
+					if (member && payload.new.party_member_id !== member.id) return;
 					photos = [...photos, payload.new];
 				} else if (payload.eventType === 'DELETE') {
 					if (!photos.some((photo) => photo.id === payload.old.id)) return;
